@@ -50,6 +50,8 @@ except:
 LOGGER = logging.getLogger(__name__)
 
 import pandas as pd
+from tqdm import tqdm  # Import the tqdm library
+
 def find_adjacencies_command(args):
     """
     Infer co-expression modules.
@@ -97,6 +99,7 @@ def find_adjacencies_command(args):
     )
     method = grnboost2 if args.method == "grnboost2" else genie3
     try:
+        tqdm_desc = "Inferring regulatory networks"
         if args.sparse:
             network = method(
                 expression_data=ex_mtx[0],
@@ -105,6 +108,7 @@ def find_adjacencies_command(args):
                 verbose=True,
                 client_or_address=client,
                 seed=args.seed,
+                progress_bar=tqdm(total=len(ex_mtx[1]), desc=tqdm_desc),
             )
         else:
             network = method(
@@ -113,6 +117,7 @@ def find_adjacencies_command(args):
                 verbose=True,
                 client_or_address=client,
                 seed=args.seed,
+                progress_bar=tqdm(total=len(ex_mtx.columns), desc=tqdm_desc),
             )
     finally:
         shutdown_callback(False)
@@ -120,7 +125,11 @@ def find_adjacencies_command(args):
     LOGGER.info("Writing results to file.")
 
     extension = PurePath(args.output.name).suffixes
+    tqdm.write(f"Saving results to {args.output.name}")  # Log saving with tqdm
+
     network.to_csv(args.output.name, index=False, sep=suffixes_to_separator(extension))
+
+    tqdm.write("Done!")
 
 
 def adjacencies2modules(args):
