@@ -26,3 +26,4 @@ requests
 aiohttp
 scikit-learn>=0.22.2
 feather-format
+scanpy
