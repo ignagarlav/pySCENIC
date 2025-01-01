@@ -68,11 +68,14 @@ def find_adjacencies_command(args):
         sys.exit(1)
 
     tf_names = load_tf_names(args.tfs_fname.name)
-
+    print("Number of TFs:", len(tf_names))
+    print("First 10 TFs:", tf_names[:10])
     if args.sparse:
         n_total_genes = len(ex_mtx[1])
         gene_names = pd.Series(ex_mtx[1])
         n_matching_genes = gene_names.isin(tf_names).sum()
+        print("Number of genes in expression matrix:", len(gene_names))
+        print("First 10 genes:", gene_names[:10])
     else:
         n_total_genes = len(ex_mtx.columns)
         n_matching_genes = len(ex_mtx.columns.isin(tf_names))
