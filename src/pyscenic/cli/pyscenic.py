@@ -49,7 +49,7 @@ except:
 
 LOGGER = logging.getLogger(__name__)
 
-
+import pandas as pd
 def find_adjacencies_command(args):
     """
     Infer co-expression modules.
@@ -71,7 +71,8 @@ def find_adjacencies_command(args):
 
     if args.sparse:
         n_total_genes = len(ex_mtx[1])
-        n_matching_genes = len(ex_mtx[1].isin(tf_names))
+        gene_names = pd.Series(ex_mtx[1])
+        n_matching_genes = gene_names.isin(tf_names).sum()
     else:
         n_total_genes = len(ex_mtx.columns)
         n_matching_genes = len(ex_mtx.columns.isin(tf_names))
